@@ -7,13 +7,22 @@ $location = "West Europe"
 $adminLogin = "sqladmin"
 $password = "Tiger123"
 #$serverName = "mysqlserver-$(Get-Random)"
-$serverName="SqlSrv-Nklabs"
+$serverName="SqlSrv-Nklabs".ToLower()
 $databaseName = "Adventureworks"
 
 # The ip address range that you want to allow to access your server 
 # (leaving at 0.0.0.0 will prevent outside-of-azure connections to your DB)
-$startIp = "0.0.0.0"
-$endIp = "0.0.0.0"
+
+
+$publicip = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
+$startIp = $publicip.Split('.')
+$endIp = $publicip.Split('.')
+$startIp[-1] = "0"
+$endIp[-1] = "255"
+
+$startIp = $startIp -Join "."
+$endIp = $endIp -Join "."
+
 
 # Show randomized variables
 Write-host "Resource group name is" $resourceGroupName 
@@ -58,3 +67,17 @@ $database = New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
    -MinimumCapacity 2 `
    -SampleName "AdventureWorksLT"
 $database
+
+
+
+$ServerInstance = Get-AzSqlServer -ResourceGroupName $resourceGroupName | Where-Object {$_.ServerName -eq $serverName}
+Write-Host $ServerInstance.FullyQualifiedDomainName
+
+Invoke-Sqlcmd -Query "select table_schema,count(1) Objects_count From information_schema.tables group by table_schema" `
+-ServerInstance $ServerInstance.FullyQualifiedDomainName -Username $adminLogin -Password $password `
+-Database $databaseName | Format-Table;
+
+
+#drop the database and server
+
+Remove-AzSqlServer -ResourceGroupName $resourceGroupName -ServerName $serverName
