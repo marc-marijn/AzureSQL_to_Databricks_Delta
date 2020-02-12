@@ -3,6 +3,7 @@ $PSVersionTable
 #Login and setting up the Azure context
 Connect-AzAccount
 Get-AzTenant
+
 Get-AzSubscription
 $sub = Get-AzSubscription | Select-Object Name
 write-output $sub
