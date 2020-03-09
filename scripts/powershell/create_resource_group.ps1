@@ -56,6 +56,13 @@ $serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGr
    -FirewallRuleName "AllowedIPs" -StartIpAddress $startIp -EndIpAddress $endIp
 $serverFirewallRule
 
+
+
+$serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
+   -ServerName $serverName `
+   -FirewallRuleName "ADBIPs" -StartIpAddress "54.69.164.179" -EndIpAddress "54.69.164.179"
+$serverFirewallRule
+
 # Create General Purpose Gen4 database with 1 vCore
 Write-host "Creating a gen5 2 vCore database..."
 $database = New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
@@ -80,4 +87,4 @@ Invoke-Sqlcmd -Query "select table_schema,count(1) Objects_count From informatio
 
 #drop the database and server
 
-Remove-AzSqlServer -ResourceGroupName $resourceGroupName -ServerName $serverName
+#Remove-AzSqlServer -ResourceGroupName $resourceGroupName -ServerName $serverName
