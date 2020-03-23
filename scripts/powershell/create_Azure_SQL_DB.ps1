@@ -30,7 +30,7 @@ Write-host "Password is" $password
 Write-host "Server name is" $serverName 
 
 # Connect to Azure
-Connect-AzAccount
+#Connect-AzAccount
 
 # Set subscription ID
 Set-AzContext -SubscriptionId $subscriptionId 
@@ -60,7 +60,7 @@ $serverFirewallRule
 
 $serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
    -ServerName $serverName `
-   -FirewallRuleName "ADBIPs" -StartIpAddress "54.69.164.179" -EndIpAddress "54.69.164.179"
+   -FirewallRuleName "ADB4IPs" -StartIpAddress "13.80.10.178" -EndIpAddress "13.80.10.178"
 $serverFirewallRule
 
 # Create General Purpose Gen4 database with 1 vCore

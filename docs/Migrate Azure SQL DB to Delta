@@ -1,2 +1,14 @@
 Introduction
 As part of this article. I would like to show you how to migrate Azure SQL DB to Data Bricks Delta. In many use cases technology team would like to migrate the data base from Azure SQL DB to Data Bricks Delta. One of such typical scenario in data warehousing or BI projects is when data base size goes beyond 4 TB. Many other use cases such as data base scale-ability in terms of processing power,  database storage or need of structured or semi-structured data. Or even for simply product comparison. In any situation, if you need to migrate an Azure SQL DB to Data Bricks Delta, this article could be used as a reference
+
+1. Spin up Azure SQL DB - create through powershell
+2. Spin up Azure Data bricks workspace - create through portal
+3. Add firewall rule for ADB on Azure SQL DB
+3. Create a Storage Account - through powershell
+4. Create a service principle in AAD - through powershell
+4.5 Grant proxy account to access storage account - through powershell
+5. Grant proxy account to use Azure Data Bricks with storage account
+6. copy sql table to delta tables
+7. check query performance between Azure SQL DB vs Delta
+8. Views for data masking
+9. 
