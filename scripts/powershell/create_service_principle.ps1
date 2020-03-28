@@ -9,9 +9,7 @@
 # Set variable values
 $DisplayName = "sp_adb5"
 
-$sp = Get-AzAdServicePrincipal -DisplayName $DisplayName
-
-$clientsec = [System.Net.NetworkCredential]::new("testing", $sp.Secret).Password
+$sp = New-AzAdServicePrincipal -DisplayName $DisplayName
 
 $credProps = @{
     StartDate = Get-Date

@@ -1,20 +1,23 @@
+# This script was referred from below link. Slighly modified.
 # https://docs.microsoft.com/en-us/azure/sql-database/scripts/sql-database-create-and-configure-database-powershell
+
+
+
+#If you need to create a new resource group
+#New-AzResourceGroup -Name $resourceGroup -Location $location
 
 # Set variables for your server and database
 
-$subscriptionId = 'be95106b-e57f-4d40-bcdd-1944f07d035f'
-#$resourceGroupName = "myResourceGroup-$(Get-Random)"
-$resourceGroupName="rg-we-analytics-dev"
+$subscriptionId = 'xxx-xxx'
+$resourceGroupName="rg-xxx"
 $location = "West Europe"
 $adminLogin = "sqladmin"
-$password = "Tiger123"
+$password = "xxxx" #Set
 #$serverName = "mysqlserver-$(Get-Random)"
-$serverName="SqlSrv-Nklabs".ToLower()
+$serverName="SqlSrv-Myapp".ToLower()
 $databaseName = "Adventureworks"
 
-# The ip address range that you want to allow to access your server 
-# (leaving at 0.0.0.0 will prevent outside-of-azure connections to your DB)
-
+# Below script will add your client ip range on Azure SQL DB firewall
 
 $publicip = (Invoke-WebRequest -uri "http://ifconfig.me/ip").Content
 $startIp = $publicip.Split('.')
@@ -59,12 +62,6 @@ $serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGr
 $serverFirewallRule
 
 
-
-$serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
-   -ServerName $serverName `
-   -FirewallRuleName "ADB2IPs" -StartIpAddress "40.68.56.32" -EndIpAddress "40.68.56.32"
-$serverFirewallRule
-
 # Create General Purpose Gen4 database with 1 vCore
 Write-host "Creating a gen5 2 vCore database..."
 $database = New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
@@ -85,8 +82,3 @@ Write-Host $ServerInstance.FullyQualifiedDomainName
 Invoke-Sqlcmd -Query "select table_schema,count(1) Objects_count From information_schema.tables group by table_schema" `
 -ServerInstance $ServerInstance.FullyQualifiedDomainName -Username $adminLogin -Password $password `
 -Database $databaseName | Format-Table;
-
-
-#drop the database and server
-
-#Remove-AzSqlServer -ResourceGroupName $resourceGroupName -ServerName $serverName
