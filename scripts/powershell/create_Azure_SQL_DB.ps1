@@ -1,3 +1,5 @@
+# https://docs.microsoft.com/en-us/azure/sql-database/scripts/sql-database-create-and-configure-database-powershell
+
 # Set variables for your server and database
 
 $subscriptionId = 'be95106b-e57f-4d40-bcdd-1944f07d035f'
@@ -60,7 +62,7 @@ $serverFirewallRule
 
 $serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
    -ServerName $serverName `
-   -FirewallRuleName "ADB4IPs" -StartIpAddress "13.80.10.178" -EndIpAddress "13.80.10.178"
+   -FirewallRuleName "ADB2IPs" -StartIpAddress "40.68.56.32" -EndIpAddress "40.68.56.32"
 $serverFirewallRule
 
 # Create General Purpose Gen4 database with 1 vCore
