@@ -6,8 +6,6 @@ Purpose: Purpose of this powershell scripts is to
 4. Create Azure Keyvault, assign access policy and store keys and passwords
 
 
-Parameters are already set from Azure_parameters_setup.ps1. Make sure to run parameters file before executing commands from this file.
-
 Version Number     Date            ModifiedBy                  Description
 --------------------------------------------------------------------------------------
 v1.0               28-03-2020      Vijaybabu Nakkonda          Initial Version
