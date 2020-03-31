@@ -19,7 +19,7 @@ Login-AzAccount -TenantId "1c13b526-3056-482b-94ec-298476e01ea5"
 
 Get-InstalledModule -Name AzureRM -AllVersions
 Get-InstalledModule
-Get-InstalledModule -Name Azure -AllVersions
+Get-InstalledModule -Name Az -AllVersions
 Get-NetIPAddress | Where-Object {$_.AddressFamily -eq 'IPv4'}
 
 Uninstall-Module Azure

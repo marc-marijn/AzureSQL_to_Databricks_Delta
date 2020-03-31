@@ -1,56 +1,126 @@
-#Reference Link
-#https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-powershell
+<#
+Purpose: Purpose of this powershell scripts is to
+1. Create storage account and container
+2. Create service principle and assign password for azure data bricks notebook execution
+3. Grant "Storage Blob Data Contributor" access to service principle on storage account
+4. Create Azure Keyvault, assign access policy and store keys and passwords
 
-$resourceGroup = "rg-we-analytics-dev"
+
+Parameters are already set from Azure_parameters_setup.ps1. Make sure to run parameters file before executing commands from this file.
+
+Version Number     Date            ModifiedBy                  Description
+--------------------------------------------------------------------------------------
+v1.0               28-03-2020      Vijaybabu Nakkonda          Initial Version
+
+Exeuction Method: Execute the whole file from powershell
+
+#>
+#Begin-------------------Azure Parameters section---------------------------------------
 $location = "westeurope"
-$account_name = "sadeltalake"
 $subscriptionId = 'be95106b-e57f-4d40-bcdd-1944f07d035f'
+$resourceGroupName = "rg-we-analytics-dev"
+
+#Azure Data Lake Gen2 parameters
+$storage_account_name = "sadeltalake"
 $container = "deltalake"
-$key_vault_name = "kv-nakkonda-test"
 
-#If you need to create a new resource group
-#New-AzResourceGroup -Name $resourceGroup -Location $location
+#Azure Keyvault parameters
+$key_vault_name = "kv-nakkonda-acc"
 
-#Get-AzLocation | Select-Object Location
-
-$sa = New-AzStorageAccount -ResourceGroupName $resourceGroup `
-  -Name $account_name `
-  -Location $location `
-  -SkuName Standard_RAGRS `
-  -Kind StorageV2 `
-  -EnableHierarchicalNamespace $True
-
-#Create a new container within storage account
-$con = New-AzStorageContainer -Name $container -Permission Container -Context $sa.Context
-
-# Create Service Principle, assign password
-$DisplayName = "sp_adb5"
-
-$sp = Get-AzAdServicePrincipal -DisplayName $DisplayName
-Write-host $Sp.ApplicationId
-Write-host $sa.StorageAccountName
-$sa = Get-AzStorageAccount -ResourceGroupName $resourceGroup -Name $account_name
-
+#Azure Active Directory parameters
+$Service_Principle_DisplayName = "sp_deltalake"
 $credProps = @{
     StartDate = Get-Date
     EndDate = (Get-Date -Year 2024)
     KeyId = (New-Guid).ToString()
-    Value = 'MySuperAwesomePasswordIs3373'
+    Value = 'SP_deltalakepassword!3373'
  }
- $credentials = New-Object Microsoft.Azure.Graph.RBAC.Models.PasswordCredential -Property $credProps
+ #sql database parameters
+ $password = "Tiger123"
+ #End-------------------Azure Parameters section---------------------------------------
 
-Set-AzADServicePrincipal -ObjectId $sp.Id -PasswordCredential $credentials
+#1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storaage Gen2
+$sa = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storage_account_name -ErrorAction SilentlyContinue
+If (-Not $sa) 
+{
+  $sa = New-AzStorageAccount -resourceGroupName $resourceGroupName `
+    -Name $storage_account_name `
+    -Location $location `
+    -SkuName Standard_RAGRS `
+    -Kind StorageV2 `
+    -EnableHierarchicalNamespace $True
 
- #Grant service principle to access Storage account (storage account level access)
+    Write-Host "Storage account name " $sa.StorageAccountName " created successfully."
+}
+else {
+  Write-Host "Storage account name " $storage_account_name " already exists"
+}
+
+#1.1 Create a new container within storage account
+
+$con=Get-AzStorageContainer -Name $container -Context $sa.Context -ErrorAction SilentlyContinue
+If (-Not $sa) {
+  $con=New-AzStorageContainer -Name $container -Permission Container -Context $sa.Context
+}
+else {
+  Write-Host "Container  " $con.Name " already exists"
+}
+        
+ 
+#2. Create Service Principle and assign password
+$sp = Get-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName -ErrorAction SilentlyContinue
+If (-Not $sp)
+{
+  $sp = New-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName
+  $credentials = New-Object Microsoft.Azure.Graph.RBAC.Models.PasswordCredential -Property $credProps
+  Set-AzADServicePrincipal -ObjectId $sp.Id -PasswordCredential $credentials
+}
+else {
+  Write-Host "Service Principle " $sp.DisplayName " already exists"
+}
+#2.1 Set password to  service princple
+
+
+#3.Grant service principle to access Storage account (storage account level access)
+$ra = Get-AzRoleAssignment -ObjectId $Sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
+If (-Not $ra)
+{
 New-AzRoleAssignment -ApplicationId $Sp.ApplicationId `
   -RoleDefinitionName "Storage Blob Data Contributor" `
-  -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Storage/storageAccounts/$account_name"
+  -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
+}
+else {
+  Write-Host "Role assignment for Service Principle on storage account already exists"
+}
 
-#Store the service principle application id and password in Azure Key Vault
-$adbspkey = ConvertTo-SecureString $Sp.ApplicationId -AsPlainText -Force
-Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'adbspappkey' -SecretValue $adbspkey
+#4. Create Azure Keyvault, assign access policy and store keys and passwords
+$kv = Get-AzKeyVault -VaultName $key_vault_name -resourceGroupName $resourceGroupName -ErrorAction SilentlyContinue
+if (-Not $kv)
+{
+  $kv = New-AzKeyVault -VaultName $key_vault_name -resourceGroupName $resourceGroupName -Location $location
+  #4.1 Assign get,set,list,delete access policy to current user on secrets of Azure Key vault
+  $current_user=Get-AzADUser -SearchString (Get-AzContext).Account.Id
+  Set-AzKeyVaultAccessPolicy -VaultName $key_vault_name -EmailAddress $current_user.UserPrincipalName -PermissionsToSecrets get,set,list,delete -PassThru
 
-$adbspsecret = ConvertTo-SecureString $credProps.Value -AsPlainText -Force
-Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'adbspsecret' -SecretValue $adbspsecret
+  #4.2 Store the service principle application id in Azure Key vault secret
+  $adbspappkey = ConvertTo-SecureString $Sp.ApplicationId -AsPlainText -Force
+  Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'adbspappkey' -SecretValue $adbspappkey
+
+  #4.3 Store the service principle password in Azure Key vault secret
+  $adbspsecret = ConvertTo-SecureString $credProps.Value -AsPlainText -Force
+  Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'adbspsecret' -SecretValue $adbspsecret
+
+  #4.4 Store the sqldb password in Azure Key vault secret
+  $sqldbsecret = ConvertTo-SecureString $password -AsPlainText -Force
+  Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'sqldbsecret' -SecretValue $sqldbsecret
+}
+else {
+  Write-Host "Key vault " $kv.VaultName " already exists"
+}
+
+
+
+
+
 
 
