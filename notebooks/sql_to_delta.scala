@@ -10,7 +10,7 @@ val configs = Map(
 
 // Optionally, you can add <directory-name> to the source URI of your mount point.
 dbutils.fs.mount(
-  source = "abfss://<Container>@<Storage Account Name>.dfs.core.windows.net/",
+  source = "abfss://deltalake@sadeltalake.dfs.core.windows.net/",
   mountPoint = "/mnt/deltalake",
   extraConfigs = configs)
 
@@ -26,7 +26,7 @@ dbutils.fs.mount(
 
 //Steup: Create connection to Azure SQL DB from Data bricks
 //Reference: https://docs.microsoft.com/en-us/azure/databricks/data/data-sources/sql-databases
-//During Execution below command, there will be an exception that cluster(Scala) IP address is not allowed to connect SQL.
+//During Execution below command, there will be an exception that cluster(Scala node) IP address is not allowed to connect SQL.
 //Note this IP address and add this in Azure SQL firewall using powershell
 import java.util.Properties
 val jdbcHostname = "sqlsrv-myapp.database.windows.net"
@@ -80,7 +80,7 @@ SQL_Tables.createOrReplaceTempView("SQL_Tables")
 // MAGIC %sql
 // MAGIC --Migration Command 2: SQL: Prepare statements to Create Schema on Delta
 // MAGIC --On Delta, each schema will be treated as a database. Check the data tab to see new database created for each schema
-// MAGIC --During Execution of below command, there will be an exception that cluster(Sql) IP address is not allowed to connect SQL.
+// MAGIC --During Execution of below command, there will be an exception that cluster(Sql node) IP address is not allowed to connect SQL.
 // MAGIC --Note this IP address and add this in Azure SQL firewall using powershell
 // MAGIC 
 // MAGIC select array_join(array('create schema ',Table_Schema,';'),'') from SQL_Tables
