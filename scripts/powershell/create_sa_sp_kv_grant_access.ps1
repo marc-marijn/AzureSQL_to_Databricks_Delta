@@ -17,15 +17,15 @@ Exeuction Method: Execute the whole file from powershell
 #>
 #Begin-------------------Azure Parameters section---------------------------------------
 $location = "westeurope"
-$subscriptionId = 'be95106b-e57f-4d40-bcdd-1944f07d035f'
-$resourceGroupName = "rg-we-analytics-dev"
+$subscriptionId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+$resourceGroupName = "rgxxxxxxxxxxxxx"
 
 #Azure Data Lake Gen2 parameters
 $storage_account_name = "sadeltalake"
 $container = "deltalake"
 
 #Azure Keyvault parameters
-$key_vault_name = "kv-nakkonda-acc"
+$key_vault_name = "kv-xxxxxxxx"
 
 #Azure Active Directory parameters
 $Service_Principle_DisplayName = "sp_deltalake"
@@ -36,7 +36,7 @@ $credProps = @{
     Value = 'SP_deltalakepassword!3373'
  }
  #sql database parameters
- $password = "Tiger123"
+ $password = "xxxxxxxx"
  #End-------------------Azure Parameters section---------------------------------------
 
 #1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storaage Gen2

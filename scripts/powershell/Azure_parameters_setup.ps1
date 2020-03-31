@@ -16,7 +16,7 @@ $location = "westeurope"
 
 $tenant = "1c13b526-3056-482b-94ec-298476e01ea5"
 $subscriptionId = 'be95106b-e57f-4d40-bcdd-1944f07d035f'
-$resourceGroup = "rg-we-analytics-dev"
+$resourceGroupName = "rg-we-analytics-dev"
 #If you need to create a new resource group uncomment below powershell
 #New-AzResourceGroup -Name $resourceGroup -Location $location
 

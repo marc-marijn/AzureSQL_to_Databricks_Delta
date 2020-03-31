@@ -5,5 +5,11 @@ $serverName="SqlSrv-Myapp".ToLower()
 
 $serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
    -ServerName $serverName `
-   -FirewallRuleName "ADB2IPs" -StartIpAddress "23.97.136.239" -EndIpAddress "23.97.136.239"
+   -FirewallRuleName "ADB2IPs" -StartIpAddress "xxx.xxx.xxx.xxx" -EndIpAddress "xxx.xxx.xxx.xxx"
+$serverFirewallRule
+
+
+$serverFirewallRule = New-AzSqlServerFirewallRule -ResourceGroupName $resourceGroupName `
+   -ServerName $serverName `
+   -FirewallRuleName "ADB3IPs" -StartIpAddress "xxx.xxx.xxx.xxx" -EndIpAddress "xxx.xxx.xxx.xxx"
 $serverFirewallRule

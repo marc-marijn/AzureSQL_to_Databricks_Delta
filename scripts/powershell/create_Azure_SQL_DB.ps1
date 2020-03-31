@@ -18,15 +18,15 @@ $location = "westeurope"
 # To get list of available locations uncomment and execute below script
 #Get-AzLocation | Select-Object Location
 
-$tenant = "1c13b526-3056-482b-94ec-298476e01ea5"
-$subscriptionId = 'be95106b-e57f-4d40-bcdd-1944f07d035f'
-$resourceGroupName = "rg-we-analytics-dev"
+$tenant = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+$subscriptionId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+$resourceGroupName = "xxxxxxxxxxxxx"
 #If you need to create a new resource group uncomment below powershell
 #New-AzResourceGroup -Name $resourceGroup -Location $location
 
 #sql database parameters
 $adminLogin = "sqladmin"
-$password = "Tiger123"
+$password = "xxxxxxxxx"
 $serverName="SqlSrv-Myapp".ToLower()
 $databaseName = "Adventureworks"
 #End-------------------Azure Parameters section---------------------------------------
