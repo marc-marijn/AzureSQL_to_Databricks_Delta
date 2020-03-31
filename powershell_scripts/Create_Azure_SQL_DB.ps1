@@ -2,7 +2,8 @@
 Purpose: Purpose of this file is to provision Azure SQL Server and deploy Adventureworks database as Azure SQLDB.
 Parameters are already set from Azure_parameters_setup.ps1
 Description:
-This script was referred from below link. Slighly modified to add client ip range into Azure SQL Server firewall
+This script was referred from below link. Included if condition, to avoid errors in case of rerun.
+Added a small script to include client ip range into Azure SQL Server firewall
 https://docs.microsoft.com/en-us/azure/sql-database/scripts/sql-database-create-and-configure-database-powershell
 
 Version Number     Date            ModifiedBy                  Description
