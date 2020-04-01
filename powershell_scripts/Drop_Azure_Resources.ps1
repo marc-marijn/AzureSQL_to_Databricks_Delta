@@ -18,7 +18,9 @@ $resourceGroupName = "rg-xxxxxxxxxxxx"
 $serverName="SqlSrv-Myapp".ToLower()
 $storage_account_name = "sadeltalake"
 $key_vault_name = "kv-xxxxxxxx"
+$Service_Principle_DisplayName = "sp_deltalake"
 
 Remove-AzSqlServer -ResourceGroupName $resourceGroupName -ServerName $serverName
 Remove-AzStorageAccount -Name $storage_account_name -ResourceGroupName $resourceGroupName
+Remove-AzADServicePrincipal -DisplayName $Service_Principle_DisplayName
 Remove-AzKeyVault -VaultName $key_vault_name
