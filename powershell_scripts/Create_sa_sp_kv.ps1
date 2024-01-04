@@ -40,32 +40,27 @@ $credProps = @{
  $password = [Environment]::GetEnvironmentVariable("demo_sqldb_password", "User")
  #End-------------------Azure Parameters section---------------------------------------
 
-#1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storaage Gen2
-$sa = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storage_account_name -ErrorAction SilentlyContinue
-If (-Not $sa) 
-{
-  $sa = New-AzStorageAccount -resourceGroupName $resourceGroupName `
-    -Name $storage_account_name `
-    -Location $location `
-    -SkuName Standard_RAGRS `
-    -Kind StorageV2 `
-    -EnableHierarchicalNamespace $True
-
-    Write-Host "Storage account name " $sa.StorageAccountName " created successfully."
-}
-else {
-  Write-Host "Storage account name " $storage_account_name " already exists"
-}
-
-#1.1 Create a new container within storage account
-$con = Get-AzStorageContainer -Name $container -Context $sa.Context -ErrorAction SilentlyContinue
-If (-Not $con) {
-  $con = New-AzStorageContainer -Name $container -Permission Container -Context $sa.Context
-}
-else {
-  Write-Host "Container  " $con.Name " already exists"
-}
-
+#1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storage Gen2  
+$sa = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storage_account_name -ErrorAction SilentlyContinue  
+If (-Not $sa) {  
+    $sa = New-AzStorageAccount -resourceGroupName $resourceGroupName `  
+        -Name $storage_account_name `  
+        -Location $location `  
+        -SkuName Standard_RAGRS `  
+        -Kind StorageV2 `  
+        -EnableHierarchicalNamespace $True  
+    Write-Host "Storage account name " $sa.StorageAccountName " created successfully."  
+} else {  
+    Write-Host "Storage account name " $storage_account_name " already exists"  
+}  
+  
+#1.1 Create a new container within storage account  
+$con = Get-AzStorageContainer -Name $container -Context $sa.Context -ErrorAction SilentlyContinue  
+If (-Not $con) {  
+    $con = New-AzStorageContainer -Name $container -Permission Off -Context $sa.Context  
+} else {  
+    Write-Host "Container  " $con.Name " already exists"  
+}  
         
  
 #2. Create Service Principle and assign password
