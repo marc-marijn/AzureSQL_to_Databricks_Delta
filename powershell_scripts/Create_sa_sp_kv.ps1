@@ -32,7 +32,7 @@ $key_vault_name = [Environment]::GetEnvironmentVariable("demo_key_vault_name", "
 $Service_Principle_DisplayName = "sp_deltalake"
 $credProps = @{
     StartDate = Get-Date
-    EndDate = (Get-Date -Year 2024)
+    EndDate = (Get-Date -Year 2029)
     KeyId = (New-Guid).ToString()
     Value = 'SP_deltalakepassword!3373'
  }
