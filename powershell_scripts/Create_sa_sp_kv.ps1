@@ -29,7 +29,7 @@ $container = "deltalake"
 $key_vault_name = [Environment]::GetEnvironmentVariable("demo_key_vault_name", "User")
 
 #Azure Active Directory parameters
-$Service_Principle_DisplayName = "sp_deltalake"
+$Service_Principle_DisplayName = "deltalake_sp"
 $credProps = @{
     StartDate = Get-Date
     EndDate = (Get-Date -Year 2029)
