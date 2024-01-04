@@ -22,7 +22,7 @@ $location = "westeurope"
 $resourceGroupName = [Environment]::GetEnvironmentVariable("demo_resourceGroupName", "User")
 
 #Azure Data Lake Gen2 parameters
-$storage_account_name = "sadeltalake"
+$storage_account_name = "deltalakestorage"
 $container = "deltalake"
 
 #Azure Keyvault parameters
