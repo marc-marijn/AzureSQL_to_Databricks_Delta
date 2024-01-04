@@ -7,8 +7,8 @@ $adminLogin = [Environment]::GetEnvironmentVariable("demo_username", "User")
 $password = [Environment]::GetEnvironmentVariable("demo_password", "User")
 
 # Other Variables
-$serverName="SqlSrv-Myapp".ToLower()
-$databaseName = "Adventureworks"
+$serverName="AzureSQLmirror".ToLower()
+$databaseName = "AdventureworksMirror"
 
 # Connect to Azure Account
 Connect-AzAccount -Tenant $tenant -Subscription $subscriptionId
