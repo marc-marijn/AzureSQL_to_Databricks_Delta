@@ -1,7 +1,7 @@
 # Environment Variables
 $location = [Environment]::GetEnvironmentVariable("demo_location", "User")
 $tenant = [Environment]::GetEnvironmentVariable("demo_tenant", "User")
-$subscriptionId = [Environment]::GetEnvironmentVariable("demo_subcriptionId", "User")
+$subscriptionId = [Environment]::GetEnvironmentVariable("demo_subscriptionId", "User")
 $resourceGroupName = [Environment]::GetEnvironmentVariable("demo_resourceGroupName", "User")
 $adminLogin = [Environment]::GetEnvironmentVariable("demo_username", "User")
 $password = [Environment]::GetEnvironmentVariable("demo_password", "User")
