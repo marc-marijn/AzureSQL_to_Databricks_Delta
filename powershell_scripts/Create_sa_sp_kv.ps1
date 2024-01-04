@@ -74,19 +74,19 @@ If (-Not $sp)
   Write-Host "Service Principle " $sp.DisplayName " already exists"
 }
 # Print the Service Principal Application ID  
-Write-Host "Service Principle Application ID: " $Sp.ApplicationId 
+Write-Host "Service Principle Application ID: " $sp.ApplicationId 
 
-Write-Host "Service Principle Details: " $Sp
+Write-Host "Service Principle Details: " $sp
 
 
 #2.1 Set password to  service princple
 
 
 #3.Grant service principle to access Storage account (storage account level access)
-$ra = Get-AzRoleAssignment -ObjectId $Sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
+$ra = Get-AzRoleAssignment -ObjectId $sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
 If (-Not $ra)
 {
-New-AzRoleAssignment -ApplicationId $Sp.ApplicationId `
+New-AzRoleAssignment -ApplicationId $sp.ApplicationId `
   -RoleDefinitionName "Storage Blob Data Contributor" `
   -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
 } else {
@@ -103,7 +103,7 @@ if (-Not $kv)
   Set-AzKeyVaultAccessPolicy -VaultName $key_vault_name -EmailAddress $current_user.UserPrincipalName -PermissionsToSecrets get,set,list,delete -PassThru
 
   #4.2 Store the service principle application id in Azure Key vault secret
-  $adbspappkey = ConvertTo-SecureString $Sp.ApplicationId -AsPlainText -Force
+  $adbspappkey = ConvertTo-SecureString $sp.ApplicationId -AsPlainText -Force
   Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'adbspappkey' -SecretValue $adbspappkey
 
   #4.3 Store the service principle password in Azure Key vault secret
