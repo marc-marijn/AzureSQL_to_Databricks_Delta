@@ -70,8 +70,7 @@ If (-Not $sp)
   $sp = New-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName
   $credentials = New-Object Microsoft.Azure.Graph.RBAC.Models.PasswordCredential -Property $credProps
   Set-AzADServicePrincipal -ObjectId $sp.Id -PasswordCredential $credentials
-}
-else {
+} else {
   Write-Host "Service Principle " $sp.DisplayName " already exists"
 }
 #2.1 Set password to  service princple
@@ -84,8 +83,7 @@ If (-Not $ra)
 New-AzRoleAssignment -ApplicationId $Sp.ApplicationId `
   -RoleDefinitionName "Storage Blob Data Contributor" `
   -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
-}
-else {
+} else {
   Write-Host "Role assignment for Service Principle on storage account already exists"
 }
 
@@ -109,7 +107,6 @@ if (-Not $kv)
   #4.4 Store the sqldb password in Azure Key vault secret
   $sqldbsecret = ConvertTo-SecureString $password -AsPlainText -Force
   Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'sqldbsecret' -SecretValue $sqldbsecret
-}
-else {
+} else {
   Write-Host "Key vault " $kv.VaultName " already exists"
 }
