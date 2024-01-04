@@ -1,38 +1,16 @@
-<#
-Purpose: Purpose of this file is to provision Azure SQL Server and deploy Adventureworks database as Azure SQLDB.
-Parameters are already set from Azure_parameters_setup.ps1
-Description:
-This script was referred from below link. Included if condition, to avoid errors in case of rerun.
-Added a small script to include client ip range into Azure SQL Server firewall
-https://docs.microsoft.com/en-us/azure/sql-database/scripts/sql-database-create-and-configure-database-powershell
+# Environment Variables
+$location = [Environment]::GetEnvironmentVariable("demo_location", "User")
+$tenant = [Environment]::GetEnvironmentVariable("demo_tenant", "User")
+$subscriptionId = [Environment]::GetEnvironmentVariable("demo_subcriptionId", "User")
+$resourceGroupName = [Environment]::GetEnvironmentVariable("demo_resourceGroupName", "User")
+$adminLogin = [Environment]::GetEnvironmentVariable("demo_username", "User")
+$password = [Environment]::GetEnvironmentVariable("demo_password", "User")
 
-Version Number     Date            ModifiedBy                  Description
---------------------------------------------------------------------------------------
-v1.0               28-03-2020      Vijaybabu Nakkonda          Initial Version
-
-Exeuction Method: Execute the whole file from powershell
-
-#>
-
-#Begin-------------------Azure Parameters section---------------------------------------
-$location = "westeurope"
-# To get list of available locations uncomment and execute below script
-#Get-AzLocation | Select-Object Location
-
-$tenant = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-$subscriptionId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-$resourceGroupName = "xxxxxxxxxxxxx"
-#If you need to create a new resource group uncomment below powershell
-#New-AzResourceGroup -Name $resourceGroup -Location $location
-
-#sql database parameters
-$adminLogin = "sqladmin"
-$password = "xxxxxxxxx"
+# Other Variables
 $serverName="SqlSrv-Myapp".ToLower()
 $databaseName = "Adventureworks"
-#End-------------------Azure Parameters section---------------------------------------
 
-#Do azure login before executing powershell commands
+# Connect to Azure Account
 Connect-AzAccount -Tenant $tenant -Subscription $subscriptionId
 
 #1.Create Sql Server with a system wide unique server name
