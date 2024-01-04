@@ -64,7 +64,7 @@ If (-Not $con) {
         
  
 #2. Create Service Principle and assign password
-$sp = Get-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName -ErrorAction SilentlyContinue
+$sp = Get-AzAdServicePrincipal -ApplicationId "beabe5f5-639d-4d10-98ee-14f260153df0"
 If (-Not $sp)
 {
   $sp = New-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName
@@ -75,18 +75,23 @@ If (-Not $sp)
 }
 # Print the Service Principal Application ID  
 Write-Host "Service Principle Application ID: " $sp.ApplicationId 
-
 Write-Host "Service Principle Details: " $sp
+
+# Test creating a new service principal with a different display name
+$test_sp_display_name = "test_sp_deltalake"
+$test_sp = New-AzAdServicePrincipal -DisplayName $test_sp_display_name
+Write-Host "Test Service Principle Application ID: " $test_sp.ApplicationId
 
 
 #2.1 Set password to  service princple
 
 
 #3.Grant service principle to access Storage account (storage account level access)
+$applicationId = "beabe5f5-639d-4d10-98ee-14f260153df0"
 $ra = Get-AzRoleAssignment -ObjectId $sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
 If (-Not $ra)
 {
-New-AzRoleAssignment -ApplicationId $sp.ApplicationId `
+New-AzRoleAssignment -ApplicationId $applicationId `
   -RoleDefinitionName "Storage Blob Data Contributor" `
   -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
 } else {
