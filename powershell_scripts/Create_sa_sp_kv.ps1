@@ -37,7 +37,7 @@ $credProps = @{
     Value = 'SP_deltalakepassword!3373'
  }
  #sql database parameters
- $password = [Environment]::GetEnvironmentVariable("demo_sqldb_password", "User")
+ $password = [Environment]::GetEnvironmentVariable("demo_password", "User")
  #End-------------------Azure Parameters section---------------------------------------
 
 #1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storage Gen2  
@@ -73,6 +73,12 @@ If (-Not $sp)
 } else {
   Write-Host "Service Principle " $sp.DisplayName " already exists"
 }
+# Print the Service Principal Application ID  
+Write-Host "Service Principle Application ID: " $Sp.ApplicationId 
+
+Write-Host "Service Principle Details: " $Sp
+
+
 #2.1 Set password to  service princple
 
 
