@@ -5,25 +5,28 @@ Purpose: Purpose of this powershell scripts is to
 3. Grant "Storage Blob Data Contributor" access to service principle on storage account
 4. Create Azure Keyvault, assign access policy and store keys and passwords
 
-
 Version Number     Date            ModifiedBy                  Description
 --------------------------------------------------------------------------------------
 v1.0               28-03-2020      Vijaybabu Nakkonda          Initial Version
 
-Exeuction Method: Execute the whole file from powershell
+Execution Method: Execute the whole file from powershell
 
 #>
+
+# Set the Azure context to the provided subscription ID
+$subscriptionId = [Environment]::GetEnvironmentVariable("demo_subscriptionId", "User")
+Select-AzSubscription -SubscriptionId $subscriptionId
+
 #Begin-------------------Azure Parameters section---------------------------------------
 $location = "westeurope"
-$subscriptionId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-$resourceGroupName = "rgxxxxxxxxxxxxx"
+$resourceGroupName = [Environment]::GetEnvironmentVariable("demo_resourceGroupName", "User")
 
 #Azure Data Lake Gen2 parameters
 $storage_account_name = "sadeltalake"
 $container = "deltalake"
 
 #Azure Keyvault parameters
-$key_vault_name = "kv-xxxxxxxx"
+$key_vault_name = [Environment]::GetEnvironmentVariable("demo_key_vault_name", "User")
 
 #Azure Active Directory parameters
 $Service_Principle_DisplayName = "sp_deltalake"
@@ -34,7 +37,7 @@ $credProps = @{
     Value = 'SP_deltalakepassword!3373'
  }
  #sql database parameters
- $password = "xxxxxxxx"
+ $password = [Environment]::GetEnvironmentVariable("demo_sqldb_password", "User")
  #End-------------------Azure Parameters section---------------------------------------
 
 #1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storaage Gen2
@@ -55,14 +58,14 @@ else {
 }
 
 #1.1 Create a new container within storage account
-
-$con=Get-AzStorageContainer -Name $container -Context $sa.Context -ErrorAction SilentlyContinue
-If (-Not $sa) {
-  $con=New-AzStorageContainer -Name $container -Permission Container -Context $sa.Context
+$con = Get-AzStorageContainer -Name $container -Context $sa.Context -ErrorAction SilentlyContinue
+If (-Not $con) {
+  $con = New-AzStorageContainer -Name $container -Permission Container -Context $sa.Context
 }
 else {
   Write-Host "Container  " $con.Name " already exists"
 }
+
         
  
 #2. Create Service Principle and assign password
@@ -115,10 +118,3 @@ if (-Not $kv)
 else {
   Write-Host "Key vault " $kv.VaultName " already exists"
 }
-
-
-
-
-
-
-
