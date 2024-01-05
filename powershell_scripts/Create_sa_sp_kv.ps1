@@ -1,3 +1,10 @@
+Install-Module -Name Az.KeyVault
+Install-Module -Name Az.Storage
+Install-Module -Name Az.Resources
+Install-Module -Name Az.Accounts
+
+Connect-AzAccount
+
 <#
 Purpose: Purpose of this powershell scripts is to
 1. Create storage account and container
@@ -22,14 +29,14 @@ $location = "westeurope"
 $resourceGroupName = [Environment]::GetEnvironmentVariable("demo_resourceGroupName", "User")
 
 #Azure Data Lake Gen2 parameters
-$storage_account_name = "deltalakestorage"
+$storage_account_name = "sadeltalakeadls"
 $container = "deltalake"
 
 #Azure Keyvault parameters
 $key_vault_name = [Environment]::GetEnvironmentVariable("demo_key_vault_name", "User")
 
 #Azure Active Directory parameters
-$Service_Principle_DisplayName = "deltalake_sp"
+$Service_Principle_DisplayName = "sp_deltalakeadls"
 $credProps = @{
     StartDate = Get-Date
     EndDate = (Get-Date -Year 2029)
@@ -41,14 +48,16 @@ $credProps = @{
  #End-------------------Azure Parameters section---------------------------------------
 
 #1. Create a new storage account. Enable hierarchical name space for utilizing Azure Data Lake Storage Gen2  
+
+
 $sa = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storage_account_name -ErrorAction SilentlyContinue  
 If (-Not $sa) {  
-    $sa = New-AzStorageAccount -resourceGroupName $resourceGroupName `  
-        -Name $storage_account_name `  
-        -Location $location `  
-        -SkuName Standard_RAGRS `  
-        -Kind StorageV2 `  
-        -EnableHierarchicalNamespace $True  
+    $sa = New-AzStorageAccount -ResourceGroupName $resourceGroupName `
+        -Name $storage_account_name `
+        -Location $location `
+        -SkuName 'Standard_RAGRS' `
+        -Kind 'StorageV2' `
+        -EnableHierarchicalNamespace $true  
     Write-Host "Storage account name " $sa.StorageAccountName " created successfully."  
 } else {  
     Write-Host "Storage account name " $storage_account_name " already exists"  
@@ -64,6 +73,19 @@ If (-Not $con) {
         
  
 #2. Create Service Principle and assign password
+$sp = Get-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName -ErrorAction SilentlyContinue
+If (-Not $sp)
+{
+  $sp = New-AzAdServicePrincipal -DisplayName $Service_Principle_DisplayName
+  $credentials = New-Object Microsoft.Azure.Graph.RBAC.Models.PasswordCredential -Property $credProps
+  Set-AzADServicePrincipal -ObjectId $sp.Id -PasswordCredential $credentials
+} else {
+  Write-Host "Service Principle " $sp.DisplayName " already exists"
+}
+#2.1 Set password to  service princple
+
+
+#2fout. Create Service Principle and assign password
 $sp = Get-AzAdServicePrincipal -ApplicationId "beabe5f5-639d-4d10-98ee-14f260153df0"
 If (-Not $sp)
 {
@@ -87,11 +109,10 @@ Write-Host "Test Service Principle Application ID: " $test_sp.ApplicationId
 
 
 #3.Grant service principle to access Storage account (storage account level access)
-$applicationId = "beabe5f5-639d-4d10-98ee-14f260153df0"
-$ra = Get-AzRoleAssignment -ObjectId $sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
+$ra = Get-AzRoleAssignment -ObjectId $Sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
 If (-Not $ra)
 {
-New-AzRoleAssignment -ApplicationId $applicationId `
+New-AzRoleAssignment -ApplicationId $sp.ApplicationId `
   -RoleDefinitionName "Storage Blob Data Contributor" `
   -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
 } else {
