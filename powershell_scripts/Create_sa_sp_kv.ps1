@@ -89,9 +89,11 @@ $appId = $sp.ApplicationId
 $ra = Get-AzRoleAssignment -ObjectId $Sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -ErrorAction SilentlyContinue
 If (-Not $ra)
 {
-New-AzRoleAssignment -ApplicationId $appId `
-  -RoleDefinitionName "Storage Blob Data Contributor" `
-  -Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
+New-AzRoleAssignment -ObjectId $sp.Id -RoleDefinitionName "Storage Blob Data Contributor" -Scope "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
+
+#New-AzRoleAssignment -ApplicationId $appId `
+ # -RoleDefinitionName "Storage Blob Data Contributor" `
+  #-Scope  "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storage_account_name"
 } else {
   Write-Host "Role assignment for Service Principle on storage account already exists"
 }
