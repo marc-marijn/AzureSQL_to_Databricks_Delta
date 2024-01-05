@@ -6,7 +6,8 @@ val configs = Map(
   "fs.azure.account.oauth.provider.type" -> "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider",
   "fs.azure.account.oauth2.client.id" -> dbutils.secrets.get(scope = "deltalake", key = "adbspappkey"),
   "fs.azure.account.oauth2.client.secret" -> dbutils.secrets.get(scope = "deltalake", key = "adbspsecret"),
-  "fs.azure.account.oauth2.client.endpoint" -> "https://login.microsoftonline.com/<TenantID>/oauth2/token")
+  "fs.azure.account.oauth2.client.endpoint" -> "https://login.microsoftonline.com/${dbutils.secrets.get(key = "demo-tenant")}/oauth2/token"
+
 
 // Optionally, you can add <directory-name> to the source URI of your mount point.
 dbutils.fs.mount(
