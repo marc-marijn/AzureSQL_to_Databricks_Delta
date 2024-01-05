@@ -108,7 +108,7 @@ if (-Not $kv)
   Set-AzKeyVaultAccessPolicy -VaultName $key_vault_name -EmailAddress $current_user.UserPrincipalName -PermissionsToSecrets get,set,list,delete -PassThru
 
   #4.2 Store the service principle application id in Azure Key vault secret
-  $adbspappkey = ConvertTo-SecureString $sp.ApplicationId -AsPlainText -Force
+  $adbspappkey = ConvertTo-SecureString $sp.Id -AsPlainText -Force
   Set-AzKeyVaultSecret -VaultName $key_vault_name -Name 'adbspappkey' -SecretValue $adbspappkey
 
   #4.3 Store the service principle password in Azure Key vault secret
